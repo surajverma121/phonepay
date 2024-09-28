@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios'
 
 const CheckoutPage = () => {
   // Add fields: name, fatherName, email, mobile
@@ -23,11 +24,35 @@ const CheckoutPage = () => {
     });
   };
 
+  const handlePayment = async () => {
+    // Proceed with payment after registration success
+    const data = {
+      name: formData.name,
+      mobileNumber: formData.mobile,
+      amount: 1, // assuming fixed amount for registration
+    };
+  
+    try {
+      const response = await axios.post('http://localhost:5000/create-order', data);
+      window.location.href = response.data.url; // Redirect to payment gateway
+    } catch (error) {
+      console.log('Error in payment:', error);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    try {
+      // Send the registration details to your backend
+      // await axios.post('http://localhost:5000/send-email', formData);
+      
+      // Proceed to payment after registration success
+      handlePayment();
+    } catch (error) {
+      console.error('Error submitting the form:', error);
+    }
 
-    // Simulate payment gateway redirection for registration
-    window.location.href = `https://example-payment-gateway.com/pay?amount=500&name=${formData.name}&fatherName=${formData.fatherName}&email=${formData.email}&mobile=${formData.mobile}`;
+  
   };
 
   return (
@@ -53,7 +78,7 @@ const CheckoutPage = () => {
           </p>
         </div>
         <p className="text-xl text-black mt-1">
-          Total Registration Fee: <span className="font-bold">₹500</span>
+          Total Registration Fee: <span className="font-bold">₹1</span>
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
