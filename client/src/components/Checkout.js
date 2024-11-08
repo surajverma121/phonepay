@@ -1,19 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import axios from 'axios'
+import { Link, useLocation } from 'react-router-dom';
+import axios from 'axios';
 
 const CheckoutPage = () => {
-  // Add fields: name, fatherName, email, mobile
+  const location = useLocation();
+  const amount = location.state?.amount || 0; 
+  console.log(amount);
   const [formData, setFormData] = useState({
     name: '',
     fatherName: '',
     email: '',
-    mobile: '',
+    mobileNumber: '',
+    amount: amount,
+    transactionID: ''
   });
 
+  console.log(formData)
+
+  // Function to generate a unique, random transaction ID
+  const generateTransactionID = () => {
+    const timestamp = Date.now(); // Get current timestamp
+    const randomNum = Math.floor(Math.random() * 1000000); // Generate a random number
+    return `TXN${timestamp}${randomNum}`; // Combine them for uniqueness
+  };
+
   useEffect(() => {
-    // Scroll to the top of the page when this component is loaded
     window.scrollTo(0, 0);
+    // Set a unique transaction ID on mount
+    setFormData((prevData) => ({
+      ...prevData,
+      transactionID: generateTransactionID()
+    }));
   }, []);
 
   const handleChange = (e) => {
@@ -25,34 +42,33 @@ const CheckoutPage = () => {
   };
 
   const handlePayment = async () => {
-    // Proceed with payment after registration success
     const data = {
       name: formData.name,
-      mobileNumber: formData.mobile,
-      amount: 1, // assuming fixed amount for registration
+      mobileNumber: formData.mobileNumber,
+      amount: 1,
+      transactionID: formData.transactionID,
     };
-  
+
     try {
-      const response = await axios.post('http://localhost:5000/create-order', data);
-      window.location.href = response.data.url; // Redirect to payment gateway
+      console.log('Sending data:', data); // Log request data
+      const response = await axios.post('https://www.blackgrapessoftech.com/api/payment/create-order', data);
+      console.log('Payment response:', response.data); // Log response
+      window.location.href = response.data.url;
     } catch (error) {
       console.log('Error in payment:', error);
+      if (error.response) {
+        console.log('Error details:', error.response.data);
+      }
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     try {
-      // Send the registration details to your backend
-      // await axios.post('http://localhost:5000/send-email', formData);
-      
-      // Proceed to payment after registration success
       handlePayment();
     } catch (error) {
       console.error('Error submitting the form:', error);
     }
-
-  
   };
 
   return (
@@ -60,7 +76,7 @@ const CheckoutPage = () => {
       {/* Image Section */}
       <div className="w-full lg:w-1/2 bg-gray-300 flex items-center justify-center p-4">
         <img
-          src="https://img.freepik.com/free-vector/concept-landing-page-credit-card-payment_52683-25532.jpg?t=st=1727073028~exp=1727076628~hmac=4a99d55b0e3b0fe45496ea2917dc7c263b8ef4c8d76fe797623331cdebb10193&w=740"
+          src="https://img.freepik.com/free-vector/concept-landing-page-credit-card-payment_52683-25532.jpg"
           alt="Checkout"
           className="object-cover rounded-lg shadow-lg"
         />
@@ -82,7 +98,6 @@ const CheckoutPage = () => {
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Name Field */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Name</label>
             <input
@@ -96,7 +111,6 @@ const CheckoutPage = () => {
             />
           </div>
 
-          {/* Father's Name Field */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Father's Name</label>
             <input
@@ -110,7 +124,6 @@ const CheckoutPage = () => {
             />
           </div>
 
-          {/* Email Field */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Email</label>
             <input
@@ -124,13 +137,12 @@ const CheckoutPage = () => {
             />
           </div>
 
-          {/* Mobile Number Field */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Mobile Number</label>
             <input
               type="tel"
-              name="mobile"
-              value={formData.mobile}
+              name="mobileNumber"
+              value={formData.mobileNumber}
               onChange={handleChange}
               className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
               placeholder="Enter your mobile number"
@@ -138,7 +150,6 @@ const CheckoutPage = () => {
             />
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             className="inline-flex items-center justify-center w-full h-12 px-6 font-medium tracking-wide text-white transition duration-200 rounded shadow-md md:w-auto bg-orange-500 hover:bg-orange-700 focus:shadow-outline focus:outline-none"
