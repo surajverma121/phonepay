@@ -1,19 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import axios from 'axios'
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 const CheckoutPage = () => {
-  // Add fields: name, fatherName, email, mobile
+  const location = useLocation();
+  const amount = location.state?.amount || 0;
+  console.log(amount);
   const [formData, setFormData] = useState({
-    name: '',
-    fatherName: '',
-    email: '',
-    mobile: '',
+    name: "",
+    fatherName: "",
+    email: "",
+    mobileNumber: "",
+    amount: amount,
+    transactionID: "",
   });
 
+  console.log(formData);
+
+  // Function to generate a unique, random transaction ID
+  const generateTransactionID = () => {
+    const timestamp = Date.now(); // Get current timestamp
+    const randomNum = Math.floor(Math.random() * 1000000); // Generate a random number
+    return `TXN${timestamp}${randomNum}`; // Combine them for uniqueness
+  };
+
   useEffect(() => {
-    // Scroll to the top of the page when this component is loaded
     window.scrollTo(0, 0);
+    // Set a unique transaction ID on mount
+    setFormData((prevData) => ({
+      ...prevData,
+      transactionID: generateTransactionID(),
+    }));
   }, []);
 
   const handleChange = (e) => {
@@ -25,34 +42,61 @@ const CheckoutPage = () => {
   };
 
   const handlePayment = async () => {
-    // Proceed with payment after registration success
     const data = {
       name: formData.name,
-      mobileNumber: formData.mobile,
-      amount: 1, // assuming fixed amount for registration
+      mobileNumber: formData.mobileNumber,
+      amount: formData.amount,
+      transactionID: formData.transactionID,
     };
-  
+    console.log(data);
+
     try {
-      const response = await axios.post('http://localhost:5000/create-order', data);
-      window.location.href = response.data.url; // Redirect to payment gateway
+      console.log("Sending data:", data); // Log request data
+
+      const response = await fetch(
+        "https://phone-pe-payment-gateway-integration.vercel.app/api/payment/create-order",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
+      console.log(response);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const responseData = await response.json();
+      if (responseData.ok && responseData.url) {
+        toast.success("Redirecting to payment page...");
+        setTimeout(() => {
+          window.location.href = responseData.url; // Redirect to payment page
+        }, 2000);
+      } else {
+        toast.error(responseData.message || "Failed to initiate payment.");
+      }
+      console.log("Payment response:", responseData); // Log response
+      window.location.href = responseData.url;
     } catch (error) {
-      console.log('Error in payment:', error);
+      console.log("Error in payment:", error);
+      // Log additional error details if available
+      if (error.response) {
+        console.log("Error details:", error.response.data);
+      }
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     try {
-      // Send the registration details to your backend
-      // await axios.post('http://localhost:5000/send-email', formData);
-      
-      // Proceed to payment after registration success
       handlePayment();
     } catch (error) {
-      console.error('Error submitting the form:', error);
+      console.error("Error submitting the form:", error);
     }
-
-  
   };
 
   return (
@@ -60,7 +104,7 @@ const CheckoutPage = () => {
       {/* Image Section */}
       <div className="w-full lg:w-1/2 bg-gray-300 flex items-center justify-center p-4">
         <img
-          src="https://img.freepik.com/free-vector/concept-landing-page-credit-card-payment_52683-25532.jpg?t=st=1727073028~exp=1727076628~hmac=4a99d55b0e3b0fe45496ea2917dc7c263b8ef4c8d76fe797623331cdebb10193&w=740"
+          src="https://img.freepik.com/free-vector/concept-landing-page-credit-card-payment_52683-25532.jpg"
           alt="Checkout"
           className="object-cover rounded-lg shadow-lg"
         />
@@ -73,18 +117,22 @@ const CheckoutPage = () => {
         </h1>
         <div className="bg-blue-100 p-4 rounded-lg mb-4 text-blue-800">
           <p className="text-lg font-semibold">
-            You are registering for the{' '}
-            <span className="font-bold">Full Stack Development Training Program</span>.
+            You are registering for the{" "}
+            <span className="font-bold">
+              Full Stack Development Training Program
+            </span>
+            .
           </p>
         </div>
         <p className="text-xl text-black mt-1">
-          Total Registration Fee: <span className="font-bold">₹1</span>
+          Total Registration Fee: <span className="font-bold">₹ {formData.amount}</span>
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Name Field */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Name</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Name
+            </label>
             <input
               type="text"
               name="name"
@@ -96,9 +144,10 @@ const CheckoutPage = () => {
             />
           </div>
 
-          {/* Father's Name Field */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Father's Name</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Father's Name
+            </label>
             <input
               type="text"
               name="fatherName"
@@ -110,9 +159,10 @@ const CheckoutPage = () => {
             />
           </div>
 
-          {/* Email Field */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Email
+            </label>
             <input
               type="email"
               name="email"
@@ -124,13 +174,14 @@ const CheckoutPage = () => {
             />
           </div>
 
-          {/* Mobile Number Field */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Mobile Number</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Mobile Number
+            </label>
             <input
               type="tel"
-              name="mobile"
-              value={formData.mobile}
+              name="mobileNumber"
+              value={formData.mobileNumber}
               onChange={handleChange}
               className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
               placeholder="Enter your mobile number"
@@ -138,7 +189,6 @@ const CheckoutPage = () => {
             />
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             className="inline-flex items-center justify-center w-full h-12 px-6 font-medium tracking-wide text-white transition duration-200 rounded shadow-md md:w-auto bg-orange-500 hover:bg-orange-700 focus:shadow-outline focus:outline-none"
@@ -149,7 +199,7 @@ const CheckoutPage = () => {
 
         <div className="mt-6 text-sm text-gray-600">
           <p>
-            By confirming your registration, you agree to our{' '}
+            By confirming your registration, you agree to our{" "}
             <Link to="/terms-conditions" className="text-blue-600 underline">
               terms and conditions
             </Link>
