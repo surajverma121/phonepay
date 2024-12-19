@@ -34,7 +34,7 @@ const Contact = () => {
                 {/* Address Section */}
                 <div className="px-6 py-4">
                   <h3 className="text-xl font-semibold text-black">Our Address</h3>
-                  <p className="mt-2 text-sm text-orange-600">123 Main St, San Francisco, CA 94105</p>
+                  <p className="mt-2 text-sm text-orange-600">252-F/H, Scheme No 54, Vijay Nagar, Indore, Madhya Pradesh 452010, India</p>
                 </div>
 
                 {/* Divider */}
@@ -43,8 +43,8 @@ const Contact = () => {
                 {/* Hours Section */}
                 <div className="px-6 py-4">
                   <h3 className="text-xl font-semibold text-black">Office Hours</h3>
-                  <p className="mt-2 text-sm text-gray-700">Monday - Friday: 9am - 5pm</p>
-                  <p className="mt-1 text-sm text-gray-700">Saturday: 10am - 4pm</p>
+                  <p className="mt-2 text-sm text-gray-700">Monday - Saturday: 9am - 5pm</p>
+                  {/* <p className="mt-1 text-sm text-gray-700">Saturday: 10am - 4pm</p> */}
                   <p className="mt-1 text-sm text-gray-700">Sunday: Closed</p>
                 </div>
 
@@ -54,8 +54,10 @@ const Contact = () => {
                 {/* Contact Section */}
                 <div className="px-6 py-4">
                   <h3 className="text-xl font-semibold text-black">Get in Touch</h3>
-                  <p className="mt-2 text-sm text-orange-600">Email: info@example.com</p>
-                  <p className="mt-1 text-sm text-orange-600">Phone: +1 23494 34993</p>
+                  <p className="mt-2 text-sm text-orange-600">Email: hr.blackgrapesgroup1@gmail.com,<br/> hr.blackgrapesgroup2@gmail.com</p>
+                  <p className="mt-1 text-sm text-orange-600">Phone: +91 7470997884,
+                     +91 6262414463
+                  </p>
                 </div>
               </div>
             </div>

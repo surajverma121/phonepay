@@ -8,8 +8,14 @@ const RegistrationComponent = () => {
   // Handle the checkout and pass the amount
   const handleCheckout = (amount) => {
    
-    navigate('/checkout', { state: { amount } }); // Pass amount to checkout page
+    navigate('/form', { state: { amount } }); // Pass amount to checkout page
   };
+
+    // Handle the checkout and pass the amount
+    const handleCheckoutDemat = (amount) => {
+   
+      navigate('/multiform', { state: { amount } }); // Pass amount to checkout page
+    };
 
   return (
     <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg">
@@ -34,7 +40,7 @@ const RegistrationComponent = () => {
         </div>
 
         {/* Special Offer Section */}
-        {/* <div className="flex flex-col items-center justify-center bg-orange-100 p-6 rounded-lg shadow-lg">
+        <div className="flex flex-col items-center justify-center bg-orange-100 p-6 rounded-lg shadow-lg">
           <h2 className="text-2xl font-semibold text-gray-700 mb-4">Special Offer</h2>
           <p className="text-lg font-semibold text-gray-600 mb-2">
             Open Demat Account and Get ₹200 Off!
@@ -45,12 +51,12 @@ const RegistrationComponent = () => {
             <span className="text-lg text-gray-700">/- Only</span>
           </div>
           <button
-            onClick={() => handleCheckout(300)}
+            onClick={() => handleCheckoutDemat(300)}
             className="px-6 py-3 bg-orange-500 text-white font-semibold text-lg rounded-lg shadow-md transition duration-300 hover:bg-orange-700"
           >
             Register Now for ₹300
           </button>
-        </div> */}
+        </div>
       </div>
     </div>
   );

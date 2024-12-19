@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { useSearchParams } from 'react-router-dom';
 
 const CheckoutPage = () => {
-  const location = useLocation();
-  const amount = location.state?.amount || 0;
+   const location =useLocation();
+   const amount=location.state?.amount || 300;
+  // const [searchParams] = useSearchParams();
+  // const amount = searchParams.get('amount');
+  // const user = searchParams.get('user');
   console.log(amount);
   const [formData, setFormData] = useState({
     name: "",
@@ -113,7 +117,7 @@ const CheckoutPage = () => {
       {/* Registration Form Section */}
       <div className="w-full lg:w-1/2 bg-white p-6 rounded-lg shadow-lg flex flex-col space-y-6">
         <h1 className="text-3xl font-bold text-gray-800 mb-4">
-          Confirm Your Training Program Registration
+          Confirm Your Training Program Registration 
         </h1>
         <div className="bg-blue-100 p-4 rounded-lg mb-4 text-blue-800">
           <p className="text-lg font-semibold">
@@ -125,7 +129,7 @@ const CheckoutPage = () => {
           </p>
         </div>
         <p className="text-xl text-black mt-1">
-          Total Registration Fee: <span className="font-bold">₹ {formData.amount}</span>
+          Total Registration Fee: <span className="font-bold">₹{amount}</span>
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">

@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import emailjs from 'emailjs-com';
 import { useLocation } from 'react-router-dom';
 
-const FormModal = () => {
+const Enquiry = () => {
   const { state } = useLocation(); // Retrieve passed state
   const amount = state?.amount || 0; // Default to 0 if amount not passed
+  const [isChecked, setIsChecked] = useState(false); // State for checkbox
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -43,6 +44,12 @@ const FormModal = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+     // Check if checkbox is checked
+     if (!isChecked) {
+      setMessage('Please agree to the terms and conditions.');
+      return;
+    }
+    setMessage(''); // Clear the error message if checkbox is checked
 
     const form = new FormData();
     Object.keys(formData).forEach(key => {
@@ -54,44 +61,39 @@ const FormModal = () => {
       form.append('amount', amount);
 
     try {
-      const response = await fetch('http://localhost:5000/send-email', {
+      const response = await fetch('http://localhost:5001/send-email', {
         method: 'POST',
         body: form,
       });
       const data = await response.json();
       console.log("data:   ",data);
+
       
 
       if (data.message === 'Email sent successfully') {
-        // Redirect to checkout page with the amount
-        window.location.href = `/checkout?amount=${data.amount || amount}`;
+       
+        // Show message that it's under review
+        setMessage('Thank you for your submission. Your demat account will be processed in 2-3 days.');
+        setFormData({ fullName: '',
+          fatherName: '',
+          gender: '',
+          batch: '',
+          stream: '',
+          collegeName: '',
+          address: '',
+          whatsappNumber: '',
+          email: '', // User's email
+          aadharCard: null,
+          panCard: null,
+          graduationMarksheet: null,
+          passportSizePhoto: null,
+          updatedResume: null,
+          paymentMode: '',})
+          setIsChecked(false)
+        
       } else {
         setMessage('Error submitting form.');
       }
-
-      // if (response.ok) {
-      //   setFormData({
-      //     fullName: '',
-      //     fatherName: '',
-      //     gender: '',
-      //     batch: '',
-      //     stream: '',
-      //     collegeName: '',
-      //     address: '',
-      //     whatsappNumber: '',
-      //     email: '',
-      //     aadharCard: null,
-      //     panCard: null,
-      //     graduationMarksheet: null,
-      //     passportSizePhoto: null,
-      //     updatedResume: null,
-      //     paymentMode: '',
-      //   });
-      //   setMessage('Form submitted successfully!');
-      // } else {
-      //   // Show error message
-      //   setMessage('Error submitting form');
-      // }
     } catch (error) {
       alert('Error submitting form');
     }
@@ -100,10 +102,12 @@ const FormModal = () => {
   
     <div className="bg-gray-50 py-12 min-h-screen">
     <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-8">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-       Student Details Page
+    
+    
+      <h2 className="text-xl font-bold text-gray-800 my-6 text-center">
+       Student Document Upload
       </h2>
-  
+     
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Full Name */}
@@ -252,7 +256,7 @@ const FormModal = () => {
               name="panCard" 
               onChange={handleFileChange} 
               className="w-full p-3 border border-gray-300 rounded-lg shadow-sm" 
-              required 
+            
             />
           </div>
   
@@ -264,7 +268,7 @@ const FormModal = () => {
               name="graduationMarksheet" 
               onChange={handleFileChange} 
               className="w-full p-3 border border-gray-300 rounded-lg shadow-sm" 
-              required 
+            
             />
           </div>
   
@@ -276,7 +280,7 @@ const FormModal = () => {
               name="passportSizePhoto" 
               onChange={handleFileChange} 
               className="w-full p-3 border border-gray-300 rounded-lg shadow-sm" 
-              required 
+           
             />
           </div>
   
@@ -288,7 +292,7 @@ const FormModal = () => {
               name="updatedResume" 
               onChange={handleFileChange} 
               className="w-full p-3 border border-gray-300 rounded-lg shadow-sm" 
-              required 
+           
             />
           </div>
   
@@ -300,7 +304,7 @@ const FormModal = () => {
               value={formData.paymentMode} 
               onChange={handleChange} 
               className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" 
-              required
+             
             >
               <option value="">Select</option>
               <option value="Cash">Cash</option>
@@ -308,7 +312,20 @@ const FormModal = () => {
             </select>
           </div>
         </div>
-  
+       
+         {/* Checkbox */}
+        <div className='mt-6'>
+          <label className="flex items-center space-x-3">
+            <input type='checkbox'
+            checked={isChecked}
+            onChange={(e)=>setIsChecked(e.target.checked)}
+            className='form-checkbox h-5 w-5 text-blue-600'/>
+            <span className='text-gray-700'>
+            please Insure Apprenticeship registration fees will not be refundable
+            </span>
+          </label>
+        </div>
+        
         <div className="mt-6">
           <button 
             type="submit" 
@@ -317,7 +334,9 @@ const FormModal = () => {
             Submit
           </button>
           {message && (
-            <p className="mt-4 text-center text-green-600 font-semibold">
+            <p className={`mt-4 text-center text-2xl font-semibold
+            ${message=== 'Please agree to the terms and conditions.' ? 'text-red-600'
+              : 'text-green-600'}`}>
               {message}
             </p>
           )}
@@ -325,9 +344,9 @@ const FormModal = () => {
       </form>
     </div>
   </div>
-
+  
 
   );
 };
 
-export default FormModal;
+export default Enquiry;

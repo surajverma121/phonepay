@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import logo from '../img/logo.png'
 
 export const Nav = ({
   scrollToHome,
@@ -32,25 +33,15 @@ export const Nav = ({
 
   return (
     <div className="bg-gray-900 sticky top-0 z-50">
-      <div className="px-4 py-5 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8">
+      <div className="px-2 py-5 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-1">
         <div className="relative flex items-center justify-between">
           {/* Logo Section */}
           <div
             className="inline-flex items-center cursor-pointer"
             onClick={() => handleMenuItemClick(scrollToHome)}
           >
-            <svg
-              className="w-8 text-orange-400"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              fill="none"
-            >
-              <rect x="3" y="1" width="7" height="12" />
-              <rect x="3" y="17" width="7" height="6" />
-              <rect x="14" y="1" width="7" height="6" />
-              <rect x="14" y="11" width="7" height="12" />
-            </svg>
-            <span className="ml-2 text-xl font-bold tracking-wide text-white uppercase">
+           <img src={logo} alt="logo_image" className="h-10 w-10 mr-2"/>
+            <span className="ml-1 text-xl font-bold tracking-wide text-white uppercase">
               Black{" "}
               <span className="ml-2 text-xl font-bold tracking-wide text-orange-400 uppercase">
                 Grapes Softech
@@ -92,14 +83,14 @@ export const Nav = ({
                 Contact Us
               </span>
             </li>
-            <li>
+            {/* <li>
               <span
                 onClick={handleEnquiryClick}
                 className="font-medium tracking-wide text-gray-100 transition-colors duration-200 hover:text-teal-accent-400 cursor-pointer"
               >
                 Enquiry
               </span>
-            </li>
+            </li> */}
           </ul>
 
           {/* Register Button */}
